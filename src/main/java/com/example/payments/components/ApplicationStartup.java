@@ -7,7 +7,10 @@ import com.example.payments.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.NonNullApi;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class ApplicationStartup implements ApplicationListener<ApplicationReadyEvent> {
@@ -22,7 +25,8 @@ public class ApplicationStartup implements ApplicationListener<ApplicationReadyE
     }
 
     @Override
-    public void onApplicationEvent(ApplicationReadyEvent event) {
+    @Transactional
+    public void onApplicationEvent(@NonNull ApplicationReadyEvent event) {
         final User user = userService.create(new User(null, "user@mail.ru", "user"));
         final Payment payment1 = paymentService.create(new Payment(null, user, 800L), user);
         final User admin = userService.create(new User(null, "admin@gmail.com", "admin"));

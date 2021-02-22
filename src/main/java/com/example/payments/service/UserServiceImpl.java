@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Service
@@ -18,15 +19,26 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final CrudUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final LoginAttemptService loginAttemptService;
 
     @Autowired
-    public UserServiceImpl(CrudUserRepository userRepository, PasswordEncoder passwordEncoder) {
+    private HttpServletRequest request;
+
+    @Autowired
+    public UserServiceImpl(CrudUserRepository userRepository,
+                           PasswordEncoder passwordEncoder,
+                           LoginAttemptService loginAttemptService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.loginAttemptService = loginAttemptService;
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        String ip = getClientIP();
+        if (loginAttemptService.isBlocked(ip)) {
+            throw new RuntimeException("blocked");
+        }
         User user = userRepository.getByEmail(email);
         if (user == null) {
             throw new UsernameNotFoundException("User " + email + " is not found");
@@ -59,6 +71,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     public List<User> getAll() {
         return userRepository.findAll();
+    }
+
+    private String getClientIP() {
+        String xfHeader = request.getHeader("X-Forwarded-For");
+        if (xfHeader == null){
+            return request.getRemoteAddr();
+        }
+        return xfHeader.split(",")[0];
     }
 
 }
