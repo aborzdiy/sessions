@@ -14,7 +14,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.servlet.http.HttpSession;
 import java.net.URI;
 import java.security.Principal;
 import java.util.List;
@@ -28,13 +27,11 @@ public class PaymentController {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final PaymentService paymentService;
     private final UserService userService;
-    private final HttpSession httpSession;
 
     @Autowired
-    public PaymentController(PaymentService paymentService, UserService userService, HttpSession httpSession) {
+    public PaymentController(PaymentService paymentService, UserService userService) {
         this.paymentService = paymentService;
         this.userService = userService;
-        this.httpSession = httpSession;
     }
 
     @GetMapping("/")
@@ -49,11 +46,11 @@ public class PaymentController {
         return paymentService.get(id, userService.getByEmail(principal.getName()));
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Payment> createWithLocation(@RequestBody Payment payment,
-                                                      @AuthenticationPrincipal AuthorizedUser user) {
+                                                      Principal principal) {
 
-        User userModel = userService.getByEmail(user.getUsername());
+        User userModel = userService.getByEmail(principal.getName());
         log.info("create {}, user {}", payment, userModel);
 
         Payment created = paymentService.create(payment, userModel);
