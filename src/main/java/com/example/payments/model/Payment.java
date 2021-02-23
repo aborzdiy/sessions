@@ -22,16 +22,16 @@ public class Payment {
     @JsonBackReference("payment-user")
     private User user;
 
-    @Column(name = "PAYMENT_SUM")
-    private Long sum;
+    @Column(name = "amount")
+    private Long amount;
 
     public Payment() {
     }
 
-    public Payment(Integer id, User user, Long sum) {
+    public Payment(Integer id, User user, Long amount) {
         this.id = id;
         this.user = user;
-        this.sum = sum;
+        this.amount = amount;
     }
 
     public Integer getId() {
@@ -50,12 +50,12 @@ public class Payment {
         this.user = user;
     }
 
-    public Long getSum() {
-        return sum;
+    public Long getAmount() {
+        return amount;
     }
 
-    public void setSum(Long sum) {
-        this.sum = sum;
+    public void setAmount(Long sum) {
+        this.amount = sum;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class Payment {
         return "Payment{" +
                 "id=" + id +
                 ", user=" + user +
-                ", sum=" + sum +
+                ", amount=" + amount +
                 '}';
     }
 }
