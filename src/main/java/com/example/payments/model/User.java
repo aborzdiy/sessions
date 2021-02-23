@@ -24,6 +24,9 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     protected String password;
 
+    @Column(name = "balance")
+    protected Long balance;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     @JsonManagedReference("payment-user")
     protected List<Payment> payments;
@@ -61,11 +64,20 @@ public class User {
         this.password = password;
     }
 
+    public Long getBalance() {
+        return balance;
+    }
+
+    public void setBalance(Long balance) {
+        this.balance = balance;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
+                ", balance=" + balance +
                 '}';
     }
 }
