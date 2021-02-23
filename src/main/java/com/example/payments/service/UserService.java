@@ -6,4 +6,6 @@ public interface UserService {
     User getByEmail(String email);
 
     User create(User user);
+
+    User findByLoginAndPassword(String login, String password);
 }

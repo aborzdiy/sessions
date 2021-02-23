@@ -47,6 +47,24 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    public User findByLoginAndPassword(String email, String password) throws UsernameNotFoundException {
+        String ip = getClientIP();
+        if (loginAttemptService.isBlocked(ip)) {
+            throw new RuntimeException("blocked");
+        }
+
+        User user = userRepository.getByEmail(email);
+        if (user == null) {
+            throw new UsernameNotFoundException("User " + email + " is not found");
+        }
+
+        if (passwordEncoder.matches(password, user.getPassword())) {
+            return user;
+        }
+        return null;
+    }
+
+    @Override
     public User create(User user) {
         Assert.notNull(user, "user must not be null");
         if (!user.getPassword().isEmpty()) {
@@ -75,7 +93,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     private String getClientIP() {
         String xfHeader = request.getHeader("X-Forwarded-For");
-        if (xfHeader == null){
+        if (xfHeader == null) {
             return request.getRemoteAddr();
         }
         return xfHeader.split(",")[0];
