@@ -40,6 +40,11 @@ public class User {
         this.password = password;
     }
 
+    public User(Integer id, String email, String password, Long balance) {
+        this(id, email, password);
+        this.balance = balance;
+    }
+
     public Integer getId() {
         return id;
     }
