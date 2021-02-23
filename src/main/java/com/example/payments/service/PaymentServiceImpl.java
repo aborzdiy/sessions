@@ -55,9 +55,10 @@ public class PaymentServiceImpl implements PaymentService {
 
         if (newBalance < 0) {
             throw new PaymentException(
-                    "The money in the account '" + user.getEmail() + "' is not enough (" + curBalance + ")");
+                    "Account '" + user.getEmail() + "' doesnt have enough money (" + curBalance + ")");
         }
         user.setBalance(newBalance);
+        userRepository.save(user);
 
         paymentRepository.save(new Payment(null, user, amount));
 

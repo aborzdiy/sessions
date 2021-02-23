@@ -26,9 +26,9 @@ public class ApplicationStartup implements ApplicationListener<ApplicationReadyE
     @Override
     @Transactional
     public void onApplicationEvent(@NonNull ApplicationReadyEvent event) {
-        final User user = userService.create(new User(null, "user@mail.ru", "user", 8L));
+        final User user = userService.create(new User(null, "user@mail.ru", "user", 800L));
         final Payment payment1 = paymentService.create(new Payment(null, user, 800L), user);
-        final User admin = userService.create(new User(null, "admin@gmail.com", "admin", 8L));
+        final User admin = userService.create(new User(null, "admin@gmail.com", "admin", 800L));
         final Payment payment2 = paymentService.create(new Payment(null, admin, 1000L), admin);
     }
 }
