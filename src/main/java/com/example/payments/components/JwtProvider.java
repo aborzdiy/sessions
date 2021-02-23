@@ -43,8 +43,13 @@ public class JwtProvider {
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
 
-        tokenService.save(new Token(null, stringToken, true));
-
+        Token curToken = tokenService.findByToken(stringToken);
+        if (curToken != null) {
+            curToken.setActive(true);
+            tokenService.save(curToken);
+        } else {
+            tokenService.save(new Token(null, stringToken, true));
+        }
         return stringToken;
     }
 
@@ -54,7 +59,7 @@ public class JwtProvider {
             log.error("unknown token");
             return false;
         }
-        if (!tokenModel.isActive()){
+        if (!tokenModel.isActive()) {
             log.error("token disabled");
             return false;
         }
